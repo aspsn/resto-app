@@ -1,4 +1,4 @@
-interface ValueLabel {
-  label: string;
-  value: string;
+interface IdName {
+  id: number;
+  name: string;
 }

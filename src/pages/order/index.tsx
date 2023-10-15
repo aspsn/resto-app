@@ -1,88 +1,89 @@
+import SelectOption from "@/components/SelectOption";
 import { listMeja } from "@/constants/meja";
-import { dataOrderInterface } from "@/interface/order";
+import { useAppContext } from "@/context/AppContext";
+import { setLocalStorage } from "@/helpers/localStorage";
+import { OrderInterface } from "@/interface/order";
 import CommonLayout from "@/layout/common";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Order() {
-  const [dataOrder, setDataOrder] = useState<dataOrderInterface>();
+  const listQuantity: Array<IdName> = Array(5)
+    .fill(0)
+    .map((a, i) => ({ id: i + 1, name: (i + 1).toString() }));
+  const { menus, orders, generateId, getListMenu } = useAppContext();
+  const [selectedMeja, setSelectedMeja] = useState<IdName>();
+  const [selectedMenu, setSelectedMenu] = useState<IdName>({
+    id: 0,
+    name: "Pilih Menu",
+  });
+  const [selectedQty, setSelectedQty] = useState<IdName>({
+    id: 0,
+    name: "Kuantitas",
+  });
+
+  useEffect(() => {
+    getListMenu();
+  }, []);
+
+  const handleAddOrder = () => {
+    const payload: OrderInterface = {
+      id: generateId(),
+      menuId: selectedMenu.id,
+      quantity: selectedQty.id,
+      tableId: selectedMeja?.id ?? 0,
+    };
+
+    setLocalStorage("orders", JSON.stringify([...orders, payload]));
+    setSelectedMenu({ id: 0, name: "Pilih Menu" });
+    setSelectedQty({ id: 0, name: "Kuantitas" });
+    setSelectedMeja(undefined);
+  };
 
   return (
     <CommonLayout>
       <section className="flex flex-col gap-3">
-        <div className="border-input flex overflow-hidden rounded-md border">
+        <div className="flex overflow-hidden rounded-md border border-input">
           {listMeja.map((m, i) => (
-            <div
+            <button
               key={i}
               className={` flex h-[60px] flex-1 cursor-pointer items-center justify-center  p-2 text-center text-sm transition-colors ${
-                dataOrder?.table === m.value
+                selectedMeja?.id === m.id
                   ? "bg-black text-white hover:bg-black "
-                  : "text-foreground hover:bg-muted bg-white "
+                  : "bg-white text-foreground hover:bg-muted "
               } ${i === 1 ? "border-x" : ""}`}
-              onClick={() =>
-                setDataOrder({
-                  ...(dataOrder as dataOrderInterface),
-                  table: m.value,
-                })
-              }
+              onClick={() => setSelectedMeja(m)}
             >
-              {m.label}
-            </div>
+              {m.name}
+            </button>
           ))}
         </div>
         <div className="flex gap-2">
           <div className="w-full">
-            <label className="text-sm font-medium leading-none">Menu</label>
-            <button
-              type="button"
-              className="border-input bg-background text-muted-foreground mt-1 flex h-10 w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <span>Pilih menu</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="h-4 w-4 opacity-50"
-                aria-hidden="true"
-              >
-                <path d="m6 9 6 6 6-6"></path>
-              </svg>
-            </button>
+            <SelectOption
+              label="Menu"
+              data={[{ id: 0, name: "Pilih menu" }, ...menus]}
+              value={selectedMenu}
+              onChange={(e) => setSelectedMenu(e)}
+            />
           </div>
           <div>
-            <label className="text-sm font-medium leading-none">Jumlah</label>
-            <button
-              type="button"
-              className="border-input bg-background text-muted-foreground mt-1 flex h-10 w-[140px] items-center justify-between rounded-md border px-3 py-2 text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <span>Kuantitas</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="h-4 w-4 opacity-50"
-                aria-hidden="true"
-              >
-                <path d="m6 9 6 6 6-6"></path>
-              </svg>
-            </button>
+            <div className="w-[140px]">
+              <SelectOption
+                label="Jumlah"
+                data={[{ id: 0, name: "Kuantitas" }, ...listQuantity]}
+                value={selectedQty}
+                onChange={(e) => setSelectedQty(e)}
+              />
+            </div>
           </div>
         </div>
         <div className="flex justify-end">
           <button
-            className="bg-primary text-primary-foreground ml-2 h-10 w-[100px] rounded-md px-4 py-2 text-center text-sm disabled:cursor-not-allowed disabled:opacity-50"
-            disabled
+            className="ml-2 h-10 w-[100px] rounded-md bg-primary px-4 py-2 text-center text-sm text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={
+              !selectedMeja || selectedMenu.id === 0 || selectedQty.id === 0
+            }
+            onClick={handleAddOrder}
           >
             Tambah
           </button>

@@ -1,4 +1,4 @@
-export const dataTab: Array<ValueLabel> = [
+export const dataTab: Array<{ label: string; value: string }> = [
   {
     label: "menu",
     value: "Menu",

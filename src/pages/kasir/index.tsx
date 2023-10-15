@@ -1,35 +1,50 @@
+import SelectOption from "@/components/SelectOption";
+import { listMeja } from "@/constants/meja";
+import { useAppContext } from "@/context/AppContext";
 import CommonLayout from "@/layout/common";
+import { useEffect, useState } from "react";
 
 function Kasir() {
+  const { orders, getListOrder } = useAppContext();
+  const [dataMeja, setDataMeja] = useState<Array<IdName>>([]);
+  const [selectedMeja, setSelectedMeja] = useState<IdName>({
+    id: 0,
+    name: "Nomor Meja",
+  });
+
+  useEffect(() => getListOrder(), []);
+
+  useEffect(() => {
+    let tempMeja: Array<IdName> = [];
+    listMeja.forEach((m) => {
+      const mejaOnOrder = orders.filter((o) => o.tableId === m.id);
+
+      if (mejaOnOrder.length) {
+        tempMeja.push({
+          id: m.id,
+          name: m.id.toString(),
+        });
+      }
+    });
+
+    setDataMeja(tempMeja);
+  }, [orders]);
+
   return (
     <CommonLayout>
       <section>
-        <label className="text-sm font-medium leading-none">Meja</label>
-        <div className="flex gap-2">
+        <div className="flex items-end gap-2">
+          <div className="w-[140px]">
+            <SelectOption
+              label="Meja"
+              data={[{ id: 0, name: "Nomor meja" }, ...dataMeja]}
+              value={selectedMeja}
+              onChange={(e) => setSelectedMeja(e)}
+            />
+          </div>
           <button
-            type="button"
-            className="border-input bg-background text-muted-foreground flex h-10 w-[180px] items-center justify-between rounded-md border px-3 py-2 text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <span>Nomor Meja</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="h-4 w-4 opacity-50"
-              aria-hidden="true"
-            >
-              <path d="m6 9 6 6 6-6"></path>
-            </svg>
-          </button>
-          <button
-            className="bg-primary text-primary-foreground h-10 rounded-md px-4 py-2 text-center text-sm disabled:cursor-not-allowed disabled:opacity-50"
-            disabled
+            className="h-10 rounded-md bg-primary px-4 py-2 text-center text-sm text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={selectedMeja.id === 0}
           >
             Print struk
           </button>

@@ -1,14 +1,14 @@
-export const listMeja: Array<ValueLabel> = [
+export const listMeja: Array<IdName> = [
   {
-    label: "Meja 1",
-    value: "1",
+    id: 1,
+    name: "Meja 1",
   },
   {
-    label: "Meja 2",
-    value: "2",
+    id: 2,
+    name: "Meja 2",
   },
   {
-    label: "Meja 3",
-    value: "3",
+    id: 3,
+    name: "Meja 3",
   },
 ];
