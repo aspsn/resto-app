@@ -23,9 +23,11 @@ function Menu() {
       ...menus,
     ];
 
-    setLocalStorage("menus", JSON.stringify(tempMenu));
-    getListMenu();
-    setInputMenu("");
+    if (inputMenu) {
+      setLocalStorage("menus", JSON.stringify(tempMenu));
+      getListMenu();
+      setInputMenu("");
+    }
   };
 
   const handleDeleteMenu = (id: number) => {

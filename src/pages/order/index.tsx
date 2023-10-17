@@ -10,7 +10,8 @@ function Order() {
   const listQuantity: Array<IdName> = Array(5)
     .fill(0)
     .map((a, i) => ({ id: i + 1, name: (i + 1).toString() }));
-  const { menus, orders, generateId, getListMenu } = useAppContext();
+  const { menus, orders, generateId, getListMenu, getListOrder } =
+    useAppContext();
   const [selectedMeja, setSelectedMeja] = useState<IdName>();
   const [selectedMenu, setSelectedMenu] = useState<IdName>({
     id: 0,
@@ -37,6 +38,7 @@ function Order() {
     setSelectedMenu({ id: 0, name: "Pilih Menu" });
     setSelectedQty({ id: 0, name: "Kuantitas" });
     setSelectedMeja(undefined);
+    getListOrder();
   };
 
   return (

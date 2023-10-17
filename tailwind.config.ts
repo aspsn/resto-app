@@ -16,6 +16,8 @@ const config: Config = {
         input: "hsl(214.3 31.8% 91.4%)",
         primary: "hsl(222.2 47.4% 11.2%)",
         "primary-foreground": "hsl(210 40% 98%)",
+        destructive: "hsl(0 84.2% 60.2%)",
+        "destructive-foreground": "hsl(10 40% 98%)",
       },
     },
   },

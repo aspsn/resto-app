@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap");
+
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -10,4 +12,12 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+}
+
+* {
+  font-family: "Open Sans", sans-serif !important;
+}
+
+th {
+  font-weight: inherit;
 }
