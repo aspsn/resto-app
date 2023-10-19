@@ -12,6 +12,7 @@ import {
 interface AppContextInterface {
   menus: Array<IdName> | [];
   orders: Array<OrderInterface> | [];
+  showToastReset: boolean;
   generateId: () => number;
   handleReset: () => void;
   setMenus: (e: Array<IdName>) => void;
@@ -23,6 +24,7 @@ interface AppContextInterface {
 const AppContext = createContext<AppContextInterface>({
   menus: [],
   orders: [],
+  showToastReset: false,
   generateId: () => 0,
   handleReset: () => undefined,
   setMenus: () => undefined,
@@ -34,6 +36,7 @@ const AppContext = createContext<AppContextInterface>({
 export const AppWrapper = ({ children }: { children: ReactNode }) => {
   const [menus, setMenus] = useState<Array<IdName>>([]);
   const [orders, setOrders] = useState<Array<OrderInterface>>([]);
+  const [showToastReset, setShowToastReset] = useState<boolean>(false);
 
   useEffect(() => {
     getListMenu();
@@ -41,10 +44,13 @@ export const AppWrapper = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const handleReset = () => {
+    setShowToastReset(true);
     localStorage.removeItem("menus");
     localStorage.removeItem("orders");
     getListMenu();
     getListOrder();
+
+    setTimeout(() => setShowToastReset(false), 1000);
   };
 
   const generateId = () => {
@@ -79,6 +85,7 @@ export const AppWrapper = ({ children }: { children: ReactNode }) => {
       value={{
         menus,
         orders,
+        showToastReset,
         generateId: () => generateId(),
         handleReset: () => handleReset(),
         setMenus: (e) => setMenus(e),

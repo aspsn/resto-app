@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 function CommonLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { pathname } = useRouter();
-  const { handleReset } = useAppContext();
+  const { showToastReset, handleReset } = useAppContext();
 
   return (
     <main className="w-[650px] p-6">
@@ -28,7 +28,27 @@ function CommonLayout({ children }: { children: ReactNode }) {
           ))}
         </div>
         <div className="relative flex justify-center">
-          <div className="absolute bottom-11 flex h-10 w-max items-center rounded-md bg-green-600 px-4 py-2 text-sm text-white shadow-md">
+          <div
+            className={`absolute bottom-11 flex h-10 items-center gap-2 overflow-hidden rounded-md bg-green-600 px-4 py-2 text-sm text-white shadow-lg transition-opacity duration-300 ${
+              showToastReset
+                ? "opacity-1 visible w-max"
+                : "invisible w-0 opacity-0"
+            }`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>{" "}
             Data telah direset ulang
           </div>
           <button

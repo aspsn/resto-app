@@ -9,15 +9,21 @@ import { useEffect, useState } from "react";
 interface MenuOrderInterface extends OrderInterface {
   menuName: string;
 }
+interface SelectedMeja extends IdName {
+  id: number;
+  name: string;
+  isPrint: boolean;
+}
 
 function Kasir() {
-  const { menus, orders, getListOrder } = useAppContext();
-  const [dataMeja, setDataMeja] = useState<Array<IdName>>([]);
-  const [selectedMeja, setSelectedMeja] = useState<IdName>({
+  const defaultMeja = {
     id: 0,
     name: "Nomor meja",
-  });
-  const [isPrint, setIsPrint] = useState<boolean>(false);
+    isPrint: false,
+  };
+  const { menus, orders, getListOrder } = useAppContext();
+  const [dataMeja, setDataMeja] = useState<Array<IdName>>([]);
+  const [selectedMeja, setSelectedMeja] = useState<SelectedMeja>(defaultMeja);
   const [orderOnPrint, setOrderOnPrint] = useState<Array<MenuOrderInterface>>(
     [],
   );
@@ -37,6 +43,8 @@ function Kasir() {
       }
     });
 
+    setOrderOnPrint([]);
+    setSelectedMeja(defaultMeja);
     setDataMeja(tempMeja);
   }, [orders]);
 
@@ -49,17 +57,23 @@ function Kasir() {
       }));
 
       setOrderOnPrint(menu);
-    } else {
-      setIsPrint(false);
     }
   }, [selectedMeja]);
+
+  const handleSelectMeja = (e: IdName) => {
+    setSelectedMeja({ ...e, isPrint: false });
+  };
 
   const handleEmptyTable = () => {
     const filterMeja = orders.filter((o) => o.tableId !== selectedMeja.id);
 
     setLocalStorage("orders", JSON.stringify(filterMeja));
-    setSelectedMeja({ id: 0, name: "Nomor meja" });
+    setSelectedMeja(defaultMeja);
     getListOrder();
+  };
+
+  const handlePrint = () => {
+    setSelectedMeja({ ...selectedMeja, isPrint: true });
   };
 
   return (
@@ -70,29 +84,29 @@ function Kasir() {
             <div className="w-[180px]">
               <SelectOption
                 label="Meja"
-                data={[{ id: 0, name: "Nomor meja" }, ...dataMeja]}
+                data={[defaultMeja, ...dataMeja]}
                 value={selectedMeja}
-                onChange={(e) => setSelectedMeja(e)}
+                onChange={(e) => handleSelectMeja(e)}
               />
             </div>
             <button
               className="h-10 rounded-md bg-primary px-4 py-2 text-center text-sm text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
               disabled={selectedMeja.id === 0}
-              onClick={() => setIsPrint(true)}
+              onClick={handlePrint}
             >
               Print struk
             </button>
           </div>
           {selectedMeja.id !== 0 ? (
             <button
-              className="text-destructive-foreground bg-destructive hover:bg-destructive/90 h-10 rounded-md px-4 py-2 text-center text-sm font-medium"
+              className="h-10 rounded-md bg-destructive px-4 py-2 text-center text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
               onClick={handleEmptyTable}
             >
               Kosongkan meja
             </button>
           ) : null}
         </div>
-        {isPrint ? (
+        {selectedMeja.isPrint ? (
           <div className="mt-2 w-full overflow-auto">
             <table className="w-full caption-bottom ">
               <caption className="mt-4 text-sm text-muted-foreground">
